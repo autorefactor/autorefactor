@@ -6,21 +6,365 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="description" content="自动化重构工具文档">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
-  
+
   <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
+
+  <style>
+    :root {
+      --theme-color: #42b883;
+      --theme-color-dark: #2f8f68;
+      --text-main: #1f2937;
+      --text-light: #6b7280;
+      --bg-card: rgba(255, 255, 255, 0.82);
+      --border-soft: rgba(255, 255, 255, 0.45);
+      --shadow-soft: 0 24px 80px rgba(15, 23, 42, 0.16);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "PingFang SC",
+        "Hiragino Sans GB",
+        "Microsoft YaHei",
+        sans-serif;
+      color: var(--text-main);
+      background:
+        radial-gradient(circle at top left, rgba(66, 184, 131, 0.28), transparent 34%),
+        radial-gradient(circle at top right, rgba(56, 189, 248, 0.25), transparent 32%),
+        linear-gradient(135deg, #f7fffb 0%, #edf7ff 42%, #f8fbff 100%);
+      overflow-x: hidden;
+    }
+
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      z-index: -1;
+      width: 420px;
+      height: 420px;
+      border-radius: 999px;
+      filter: blur(30px);
+      opacity: 0.45;
+      pointer-events: none;
+      animation: floatLight 12s ease-in-out infinite alternate;
+    }
+
+    body::before {
+      left: -160px;
+      top: 120px;
+      background: rgba(66, 184, 131, 0.38);
+    }
+
+    body::after {
+      right: -160px;
+      bottom: 80px;
+      background: rgba(59, 130, 246, 0.25);
+      animation-delay: 1.5s;
+    }
+
+    @keyframes floatLight {
+      from {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+
+      to {
+        transform: translate3d(40px, -30px, 0) scale(1.08);
+      }
+    }
+
+    #app {
+      position: relative;
+      min-height: 100vh;
+    }
+
+    .app-name-link img {
+      max-width: 56px;
+      border-radius: 16px;
+    }
+
+    .sidebar {
+      background: rgba(255, 255, 255, 0.74);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-right: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 8px 0 32px rgba(15, 23, 42, 0.06);
+    }
+
+    .sidebar h1 {
+      margin: 0 0 20px;
+      padding: 34px 24px 8px;
+      font-size: 26px;
+      letter-spacing: -0.04em;
+    }
+
+    .sidebar h1 a {
+      color: var(--text-main);
+      font-weight: 800;
+      text-decoration: none;
+      background: linear-gradient(135deg, #16a34a, #0ea5e9);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .sidebar-nav {
+      padding: 0 18px 32px;
+    }
+
+    .sidebar ul li a {
+      border-radius: 12px;
+      padding: 8px 12px;
+      color: #374151;
+      transition: all 0.25s ease;
+    }
+
+    .sidebar ul li a:hover {
+      color: var(--theme-color-dark);
+      background: rgba(66, 184, 131, 0.1);
+      transform: translateX(3px);
+    }
+
+    .sidebar-toggle {
+      background: rgba(255, 255, 255, 0.82);
+      border-radius: 14px;
+      box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    .content {
+      padding-top: 36px;
+    }
+
+    .markdown-section {
+      position: relative;
+      max-width: 980px;
+      margin: 0 auto 48px;
+      padding: 56px 64px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+      border-radius: 32px;
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      overflow: hidden;
+    }
+
+    .markdown-section::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      height: 8px;
+      background: linear-gradient(90deg, #42b883, #38bdf8, #818cf8);
+    }
+
+    .markdown-section::after {
+      content: "AutoRefactor";
+      position: absolute;
+      right: 38px;
+      top: 26px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: rgba(66, 184, 131, 0.42);
+    }
+
+    .markdown-section h1 {
+      margin-top: 16px;
+      margin-bottom: 18px;
+      font-size: 44px;
+      line-height: 1.18;
+      letter-spacing: -0.05em;
+      color: #111827;
+    }
+
+    .markdown-section h2 {
+      margin-top: 44px;
+      padding-left: 14px;
+      border-left: 5px solid var(--theme-color);
+      font-size: 28px;
+      letter-spacing: -0.03em;
+      color: #111827;
+    }
+
+    .markdown-section h3 {
+      margin-top: 32px;
+      color: #1f2937;
+    }
+
+    .markdown-section p {
+      line-height: 1.9;
+      color: #374151;
+      font-size: 16px;
+    }
+
+    .markdown-section a {
+      color: var(--theme-color-dark);
+      font-weight: 600;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(66, 184, 131, 0.28);
+    }
+
+    .markdown-section a:hover {
+      color: #0f766e;
+      border-bottom-color: #0f766e;
+    }
+
+    .markdown-section blockquote {
+      margin: 24px 0;
+      padding: 18px 22px;
+      border-left: none;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(66, 184, 131, 0.12), rgba(56, 189, 248, 0.12));
+      color: #374151;
+    }
+
+    .markdown-section code {
+      padding: 3px 7px;
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.07);
+      color: #0f766e;
+      font-size: 0.92em;
+    }
+
+    .markdown-section pre {
+      border-radius: 20px;
+      background: #111827;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.22);
+    }
+
+    .markdown-section pre code {
+      color: #e5e7eb;
+      background: transparent;
+    }
+
+    .markdown-section table {
+      display: table;
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow: hidden;
+      border-radius: 16px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+    }
+
+    .markdown-section table th {
+      background: rgba(66, 184, 131, 0.13);
+      color: #065f46;
+      font-weight: 700;
+    }
+
+    .markdown-section table td,
+    .markdown-section table th {
+      padding: 14px 16px;
+      border-color: rgba(15, 23, 42, 0.08);
+    }
+
+    .markdown-section ul,
+    .markdown-section ol {
+      line-height: 1.9;
+    }
+
+    .markdown-section li {
+      margin: 4px 0;
+    }
+
+    .markdown-section hr {
+      border: none;
+      height: 1px;
+      margin: 36px 0;
+      background: linear-gradient(90deg, transparent, rgba(66, 184, 131, 0.45), transparent);
+    }
+
+    .app-nav {
+      margin: 24px 36px 0 0;
+    }
+
+    .app-nav a {
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: #374151;
+      font-weight: 600;
+      transition: all 0.25s ease;
+    }
+
+    .app-nav a:hover {
+      color: var(--theme-color-dark);
+      background: rgba(255, 255, 255, 0.7);
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    .search input {
+      border-radius: 14px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    .anchor span {
+      color: var(--theme-color-dark);
+    }
+
+    .pagination-item {
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.66);
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        padding-top: 16px;
+      }
+
+      .markdown-section {
+        margin: 18px 14px 36px;
+        padding: 42px 24px;
+        border-radius: 24px;
+      }
+
+      .markdown-section h1 {
+        font-size: 34px;
+      }
+
+      .markdown-section h2 {
+        font-size: 24px;
+      }
+
+      .markdown-section::after {
+        display: none;
+      }
+
+      .app-nav {
+        margin-right: 18px;
+      }
+    }
+  </style>
 </head>
+
 <body>
   <div id="app">正在加载中...</div>
-  
+
   <script>
     window.$docsify = {
-      name: 'AutoRefactor', // 文档标题
-      repo: '',             // 你的 GitHub 仓库地址，例如 'yourname/autorefactor'
-      loadSidebar: false,    // 开启侧边栏支持
-      subMaxLevel: 2,       // 侧边栏同时显示标题的层级
+      name: 'AutoRefactor',
+      repo: '',
+      loadSidebar: false,
+      subMaxLevel: 2,
+      auto2top: true,
+      coverpage: false,
+      onlyCover: false,
+      themeColor: '#42b883',
+      search: false
     }
   </script>
-  
+
   <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
 </body>
 </html>
